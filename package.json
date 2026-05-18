@@ -1,0 +1,19 @@
+{
+  "name": "pay-me-low-poly-house-experience",
+  "private": true,
+  "version": "0.0.1",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "gsap": "^3.12.5",
+    "howler": "^2.2.4",
+    "three": "^0.160.0"
+  },
+  "devDependencies": {
+    "vite": "^5.2.11"
+  }
+}
