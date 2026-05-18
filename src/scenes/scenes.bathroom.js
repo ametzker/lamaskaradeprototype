@@ -456,7 +456,7 @@ export function createBathroomScene({ sceneManager, dialogue, controller }) {
     interactions: [
       {
         object: personaje5TalkCollider,
-        label: 'click',
+        label: 'talk',
         onClick: async () => {
           await dialogue?.showLine(getNextBathroomNpcLine());
         },

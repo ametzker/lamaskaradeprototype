@@ -463,23 +463,18 @@ canvas {
 
 .camera-turn-slider-fill {
   position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: var(--turn-progress);
+  left: var(--turn-progress);
+  top: 50%;
+  width: 64px;
+  height: 48px;
+  transform: translate(-50%, -50%);
+  border-radius: 1px;
+  border: 1px solid rgba(0, 0, 0, 0.95);
   background: #f7f300;
-  box-shadow: 0 0 12px rgba(247, 243, 0, 0.32);
+  box-shadow:
+    0 0 8px rgba(247, 243, 0, 0.3),
+    0 1px 0 rgba(255, 252, 166, 0.5) inset;
   pointer-events: none;
-}
-
-.camera-turn-slider-fill::after {
-  content: '';
-  position: absolute;
-  right: -1px;
-  top: 0;
-  bottom: 0;
-  width: 2px;
-  background: #000;
 }
 
 .camera-turn-slider {
@@ -557,5 +552,21 @@ canvas {
   .camera-turn-slider-shell {
     width: min(250px, 74vw);
     padding: 4px;
+  }
+}
+
+@media (max-width: 900px) and (orientation: portrait) {
+  .prototype-start-stripe {
+    width: min(18vw, 88px);
+  }
+
+  .prototype-start-inner {
+    width: min(94vw, 780px);
+    padding-left: clamp(20px, 7vw, 44px);
+  }
+
+  .prototype-start-logo {
+    font-size: clamp(34px, 11vw, 72px);
+    letter-spacing: 0;
   }
 }
