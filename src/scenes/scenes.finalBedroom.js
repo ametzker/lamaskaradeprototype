@@ -29,7 +29,7 @@ export function createFinalBedroomScene({ sceneManager, dialogue, controller, hu
   const FINAL_CHARACTER_HITBOX_PADDING_Y = 6.0; // AJUSTE RAPIDO: hitbox vertical completa personaje final
   const ENDING_LINE_READ_MS = 2600; // AJUSTE RAPIDO: tiempo de lectura de frase potente
   const ENDING_FINAL_FADE_MS = 520; // AJUSTE RAPIDO: duracion fade entre frase y cierre final
-  const ENDING_SOLID_YELLOW = '#ffdf00'; // AJUSTE RAPIDO: unico amarillo banana intenso para toda la secuencia final
+  const ENDING_SOLID_YELLOW = '#f7f300'; // AJUSTE RAPIDO: mismo amarillo que la pantalla de inicio
   const FINAL_CHARACTER_TUNING = {
     x: 0,
     y: 0,
@@ -53,7 +53,7 @@ export function createFinalBedroomScene({ sceneManager, dialogue, controller, hu
   });
 
   const ambient = new THREE.AmbientLight('#fff27a', 1.28);
-  const hemi = new THREE.HemisphereLight('#fff14a', '#ffdf00', 0.72);
+  const hemi = new THREE.HemisphereLight('#fff14a', '#f7f300', 0.72);
   const key = new THREE.PointLight('#ffe91f', 3.1, 16, 1.2);
   key.position.set(0, 3.3, 1.2);
 
