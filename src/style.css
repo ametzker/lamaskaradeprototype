@@ -295,7 +295,7 @@ canvas {
   position: fixed;
   inset: 0;
   padding: 28px;
-  background: transparent;
+  background: #f7f300;
   color: #121212;
   opacity: 0;
   pointer-events: none;
@@ -401,10 +401,6 @@ canvas {
 .prototype-ending-replay:hover {
   transform: translateY(-1px);
   background: rgba(250, 250, 250, 0.95);
-}
-
-.prototype-ending.is-fading {
-  opacity: 0;
 }
 
 .transition-overlay {

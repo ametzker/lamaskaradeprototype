@@ -8,7 +8,7 @@ import {
 } from '../utils/ModelLoader';
 
 export function createFinalBedroomScene({ sceneManager, dialogue, controller, hud, transition }) {
-  sceneManager.setFlag('disableRetroPass', false);
+  sceneManager.setFlag('disableRetroPass', true);
   sceneManager.setFlag('hideTurnControls', false);
   const root = new THREE.Group();
   const updatables = [];
@@ -247,18 +247,11 @@ export function createFinalBedroomScene({ sceneManager, dialogue, controller, hu
     endingLine.textContent = selected.line;
     setEndingMode('line');
 
-    if (transition) {
-      await transition.fadeOut({ color: ENDING_SOLID_YELLOW, duration: 0.82 });
-      await transition.fadeIn({ duration: 0.62 });
-    }
-
     await wait(ENDING_LINE_READ_MS);
 
     endingCode.textContent = `DISCOUNT CODE: ${selected.code}`;
     endingText.textContent = 'END OF PROTOTYPE. THIS IS ONLY A TEST FROM THE LAMASKARADE UNIVERSE.';
-    endingRoot.classList.add('is-fading');
     await wait(ENDING_FINAL_FADE_MS);
-    endingRoot.classList.remove('is-fading');
     setEndingMode('final');
   };
 
