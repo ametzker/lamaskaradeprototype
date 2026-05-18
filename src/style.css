@@ -444,6 +444,8 @@ canvas {
   height: 16px;
   border-radius: 1px;
   overflow: hidden;
+  touch-action: none;
+  cursor: ew-resize;
 }
 
 .camera-turn-slider-wrap::before {
@@ -486,9 +488,9 @@ canvas {
   appearance: none;
   background: transparent;
   outline: none;
-  cursor: ew-resize;
   position: relative;
   z-index: 2;
+  pointer-events: none;
 }
 
 .camera-turn-slider::-webkit-slider-runnable-track {

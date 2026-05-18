@@ -7,6 +7,7 @@ export class CameraTurnControls {
     this.enabled = true;
     this.dragging = false;
     this.lastRangeKey = '';
+    this.activePointerId = null;
 
     this.root = document.createElement('div');
     this.root.className = 'camera-turn-controls';
@@ -35,14 +36,49 @@ export class CameraTurnControls {
     this.root.appendChild(this.shell);
     document.body.appendChild(this.root);
 
-    this.slider.addEventListener('pointerdown', (event) => {
+    this.sliderWrap.addEventListener('pointerdown', (event) => {
+      if (!this.enabled || !this.controller) {
+        return;
+      }
+
       event.stopPropagation();
+      event.preventDefault();
       this.dragging = true;
+      this.activePointerId = event.pointerId ?? null;
+      this.sliderWrap.setPointerCapture?.(event.pointerId);
+      this.#setFromClientX(event.clientX);
     });
 
-    this.slider.addEventListener('pointerup', (event) => {
+    this.sliderWrap.addEventListener('pointermove', (event) => {
+      if (!this.dragging || !this.enabled || !this.controller) {
+        return;
+      }
+
+      if (this.activePointerId != null && event.pointerId !== this.activePointerId) {
+        return;
+      }
+
+      event.stopPropagation();
+      event.preventDefault();
+      this.#setFromClientX(event.clientX);
+    });
+
+    this.sliderWrap.addEventListener('pointerup', (event) => {
       event.stopPropagation();
       this.dragging = false;
+      if (this.activePointerId != null && event.pointerId === this.activePointerId) {
+        this.sliderWrap.releasePointerCapture?.(event.pointerId);
+      }
+      this.activePointerId = null;
+    });
+
+    this.sliderWrap.addEventListener('pointercancel', (event) => {
+      event.stopPropagation();
+      this.dragging = false;
+      if (this.activePointerId != null && event.pointerId === this.activePointerId) {
+        this.sliderWrap.releasePointerCapture?.(event.pointerId);
+      }
+      this.activePointerId = null;
     });
 
     this.slider.addEventListener('input', (event) => {
@@ -88,7 +124,10 @@ export class CameraTurnControls {
   setEnabled(flag) {
     this.enabled = flag;
     this.root.classList.toggle('is-disabled', !flag);
-    this.slider.disabled = !flag;
+    if (!flag) {
+      this.dragging = false;
+      this.activePointerId = null;
+    }
   }
 
   setVisible(flag) {
@@ -102,5 +141,23 @@ export class CameraTurnControls {
       : ((valueDeg - minDeg) / span) * 100;
     const clampedProgress = Math.min(100, Math.max(0, progress));
     this.shell.style.setProperty('--turn-progress', `${clampedProgress.toFixed(2)}%`);
+  }
+
+  #setFromClientX(clientX) {
+    const rect = this.sliderWrap.getBoundingClientRect();
+    if (!rect.width) {
+      return;
+    }
+
+    const ratio = (clientX - rect.left) / rect.width;
+    const clampedRatio = Math.min(1, Math.max(0, ratio));
+    const min = Number(this.slider.min);
+    const max = Number(this.slider.max);
+    const nextDeg = min + clampedRatio * (max - min);
+
+    this.slider.value = `${nextDeg}`;
+    // Inverted mapping so drag direction matches turn direction.
+    this.controller.setTurnOffsetRadians(-nextDeg * DEG_TO_RAD, { immediate: true });
+    this.#updateReadout(nextDeg, min, max);
   }
 }
