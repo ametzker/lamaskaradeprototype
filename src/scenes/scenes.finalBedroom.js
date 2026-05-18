@@ -8,7 +8,7 @@ import {
 } from '../utils/ModelLoader';
 
 export function createFinalBedroomScene({ sceneManager, dialogue, controller, hud, transition }) {
-  sceneManager.setFlag('disableRetroPass', true);
+  sceneManager.setFlag('disableRetroPass', false);
   sceneManager.setFlag('hideTurnControls', false);
   const root = new THREE.Group();
   const updatables = [];
@@ -29,6 +29,8 @@ export function createFinalBedroomScene({ sceneManager, dialogue, controller, hu
   const FINAL_CHARACTER_HITBOX_PADDING_Y = 6.0; // AJUSTE RAPIDO: hitbox vertical completa personaje final
   const ENDING_LINE_READ_MS = 2600; // AJUSTE RAPIDO: tiempo de lectura de frase potente
   const ENDING_FINAL_FADE_MS = 520; // AJUSTE RAPIDO: duracion fade entre frase y cierre final
+  const ENDING_SHADER_SWAP_FADE_OUT_MS = 0.22; // AJUSTE RAPIDO: micro fade-out para ocultar swap de shaders
+  const ENDING_SHADER_SWAP_FADE_IN_MS = 0.24; // AJUSTE RAPIDO: micro fade-in tras swap de shaders
   const ENDING_SOLID_YELLOW = '#f7f300'; // AJUSTE RAPIDO: mismo amarillo que la pantalla de inicio
   const FINAL_CHARACTER_TUNING = {
     x: 0,
@@ -223,21 +225,29 @@ export function createFinalBedroomScene({ sceneManager, dialogue, controller, hu
   const runEndingSequence = async (choice) => {
     const selected = endingContentByChoice[choice] ?? endingContentByChoice.both;
 
-    sceneManager.setFlag('disableRetroPass', true);
     sceneManager.setFlag('hideTurnControls', true);
     setFinalTalkColliderInteractive(false);
     sceneManager.interactionSystem?.setEnabled(false);
+    controller.setEnabled(false);
+    hud?.setPrompt('');
+    hud?.setHint('');
+
+    // Keep shaders while player is inside final room.
+    sceneManager.setFlag('disableRetroPass', false);
+
+    if (transition) {
+      await transition.fadeOut({ color: ENDING_SOLID_YELLOW, duration: ENDING_SHADER_SWAP_FADE_OUT_MS });
+    }
+
+    // Swap to flat ending screen while overlay is covering the scene.
+    sceneManager.setFlag('disableRetroPass', true);
     room.visible = false;
     pedestal.visible = false;
     finalCharacterAnchor.visible = false;
     ambient.visible = false;
     hemi.visible = false;
     key.visible = false;
-    controller.setEnabled(false);
-    hud?.setPrompt('');
-    hud?.setHint('');
 
-    // Avoid pure white clipping so the retro post-process stays visible.
     const endingYellow = new THREE.Color(ENDING_SOLID_YELLOW);
     sceneManager.scene.background = endingYellow;
     if (sceneManager.scene.fog) {
@@ -246,6 +256,10 @@ export function createFinalBedroomScene({ sceneManager, dialogue, controller, hu
 
     endingLine.textContent = selected.line;
     setEndingMode('line');
+
+    if (transition) {
+      await transition.fadeIn({ duration: ENDING_SHADER_SWAP_FADE_IN_MS });
+    }
 
     await wait(ENDING_LINE_READ_MS);
 
