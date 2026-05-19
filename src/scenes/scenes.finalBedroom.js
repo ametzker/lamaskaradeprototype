@@ -10,6 +10,7 @@ import {
 export function createFinalBedroomScene({ sceneManager, dialogue, controller, hud, transition }) {
   sceneManager.setFlag('disableRetroPass', false);
   sceneManager.setFlag('hideTurnControls', false);
+  sceneManager.audioManager?.setSpace('finalChoice', { immediate: true, duration: 0.01 });
   const root = new THREE.Group();
   const updatables = [];
   const sceneState = {
@@ -224,6 +225,7 @@ export function createFinalBedroomScene({ sceneManager, dialogue, controller, hu
 
   const runEndingSequence = async (choice) => {
     const selected = endingContentByChoice[choice] ?? endingContentByChoice.both;
+    sceneManager.audioManager?.setSpace('finalChoice', { duration: 0.4 });
 
     sceneManager.setFlag('hideTurnControls', true);
     setFinalTalkColliderInteractive(false);

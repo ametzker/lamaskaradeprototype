@@ -10,6 +10,7 @@ import {
 } from '../utils/ModelLoader';
 
 export function createBathroomScene({ sceneManager, dialogue, controller }) {
+  sceneManager.audioManager?.setSpace('bathroom', { immediate: true, duration: 0.01 });
   const root = new THREE.Group();
   const updatables = [];
   const CHARACTER_GLB_SCALE_MULTIPLIER = 0.9;
@@ -471,6 +472,7 @@ export function createBathroomScene({ sceneManager, dialogue, controller }) {
       },
     ],
     onEnter: async () => {
+      sceneManager.audioManager?.setSpace('bathroom', { duration: 0.35 });
       await bathroomMapReady;
     },
     cleanup: [

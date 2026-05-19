@@ -73,6 +73,9 @@ export function createExteriorScene({ sceneManager, controller, hud, dialogue },
     bathroomDoorUnlocked: false,
     personaje3HintStep: 0,
   };
+  const setAudioSpace = (space, { immediate = false, duration = 0.9 } = {}) => {
+    sceneManager.audioManager?.setSpace(space, { immediate, duration });
+  };
   const forceInteriorEntryFromBathroom = sceneManager.getFlag('interiorEntryFromBathroom');
   const forceUpstairsEntry = mode === 'upstairs' || sceneManager.getFlag('upstairsEntry');
   if (forceInteriorEntryFromBathroom) {
@@ -81,6 +84,12 @@ export function createExteriorScene({ sceneManager, controller, hud, dialogue },
   if (forceUpstairsEntry) {
     sceneManager.setFlag('upstairsEntry', false);
   }
+  setAudioSpace(
+    forceUpstairsEntry
+      ? 'upstairs'
+      : (forceInteriorEntryFromBathroom ? 'interior' : 'exterior'),
+    { immediate: true, duration: 0.01 },
+  );
   const originalEyeHeight = controller.eyeHeight ?? 1.65;
   const exteriorEyeHeight = originalEyeHeight + EXTERIOR_CAMERA_HEIGHT_OFFSET;
   const interiorEyeHeight = exteriorEyeHeight + INTERIOR_CAMERA_HEIGHT_OFFSET;
@@ -401,6 +410,7 @@ export function createExteriorScene({ sceneManager, controller, hud, dialogue },
     setStairArrowVisibility(false);
     setPersonaje3ColliderVisibility(false);
     setPersonaje4ColliderVisibility(false);
+    setAudioSpace('exterior');
     controller.eyeHeight = exteriorEyeHeight;
     controller.setPosition(startPosition);
     controller.lookAt(startLookAt);
@@ -556,6 +566,7 @@ export function createExteriorScene({ sceneManager, controller, hud, dialogue },
     setStairArrowVisibility(sceneState.stairArrowPlaced && sceneState.stairArrowUnlocked && !sceneState.isUpstairsFloor);
     setPersonaje3ColliderVisibility(true);
     setPersonaje4ColliderVisibility(true);
+    setAudioSpace(sceneState.isUpstairsFloor ? 'upstairs' : 'interior');
 
     if (sceneState.duplexWorldBox) {
       const interiorView = sceneState.interiorSpawnView ?? getInteriorViewFromBox(sceneState.duplexWorldBox);

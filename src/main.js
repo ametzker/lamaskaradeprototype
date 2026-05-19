@@ -125,6 +125,7 @@ let hasStartedOnce = false;
 const dialogue = new DialogueSystem({
   onVisibilityChange: (visible) => {
     dialogueOpen = visible;
+    audioManager.setDialogueActive(visible);
 
     if (!sceneManager) {
       return;
@@ -225,6 +226,7 @@ startScreen.addEventListener('click', async (event) => {
 
 window.addEventListener(START_SCREEN_EVENT, () => {
   showStartScreen();
+  void audioManager.fadeOutAndReset({ duration: 1.05 });
 });
 
 const syncTurnControlsState = () => {
