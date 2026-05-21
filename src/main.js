@@ -165,8 +165,27 @@ startScreenInner.className = 'prototype-start-inner';
 
 const startScreenLogo = document.createElement('img');
 startScreenLogo.className = 'prototype-start-logo';
-startScreenLogo.src = '/logo/lamaskarade-logo.svg';
 startScreenLogo.alt = 'LA MASKARADE';
+const startLogoCandidates = [
+  '/logo/logo.svg',
+  '/logo/lamaskarade-logo.svg',
+];
+let startLogoIndex = 0;
+const loadStartLogoCandidate = () => {
+  if (startLogoIndex >= startLogoCandidates.length) {
+    // Never render plain fallback text; keep layout clean if logo is missing.
+    startScreenLogo.alt = '';
+    startScreenLogo.style.visibility = 'hidden';
+    return;
+  }
+
+  startScreenLogo.src = startLogoCandidates[startLogoIndex];
+  startLogoIndex += 1;
+};
+startScreenLogo.addEventListener('error', () => {
+  loadStartLogoCandidate();
+});
+loadStartLogoCandidate();
 
 const startScreenSubtitle = document.createElement('p');
 startScreenSubtitle.className = 'prototype-start-subtitle';
