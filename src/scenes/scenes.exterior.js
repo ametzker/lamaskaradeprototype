@@ -52,7 +52,7 @@ export function createExteriorScene({ sceneManager, controller, hud, dialogue },
   const DOOR_RECTANGLE_OPACITY_ENTRY = 0.62; // AJUSTE RAPIDO: visibilidad recuadro entrar
   const DOOR_RECTANGLE_OPACITY_BATHROOM = 0.68; // AJUSTE RAPIDO: visibilidad recuadro lavabo
   const DOOR_RECTANGLE_EMISSIVE_ENTRY_BASE = 0.9; // AJUSTE RAPIDO: brillo base recuadro entrar
-  const DOOR_RECTANGLE_EMISSIVE_BATHROOM_BASE = 2.55; // AJUSTE RAPIDO: brillo base recuadro lavabo (mucho mas visible)
+  const DOOR_RECTANGLE_EMISSIVE_BATHROOM_BASE = 0.9; // AJUSTE RAPIDO: brillo base recuadro lavabo (restaurado)
   const PERSONAJE3_COLLIDER_PADDING_XZ = 1.15; // AJUSTE RAPIDO: ancho/fondo del area clicable de PERSONAJE3
   const PERSONAJE3_COLLIDER_PADDING_Y = 6; // AJUSTE RAPIDO: altura del area clicable de PERSONAJE3
   const PERSONAJE4_COLLIDER_PADDING_XZ = 1.2; // AJUSTE RAPIDO: ancho/fondo del area clicable de PERSONAJE4
@@ -956,7 +956,7 @@ export function createExteriorScene({ sceneManager, controller, hud, dialogue },
       );
     }
     entryDoor.material.emissiveIntensity = DOOR_RECTANGLE_EMISSIVE_ENTRY_BASE + Math.sin(time * 3.1) * 0.32;
-    bathroomDoor.material.emissiveIntensity = DOOR_RECTANGLE_EMISSIVE_BATHROOM_BASE + Math.sin(time * 3.6) * 0.95;
+    bathroomDoor.material.emissiveIntensity = DOOR_RECTANGLE_EMISSIVE_BATHROOM_BASE + Math.sin(time * 3.6) * 0.36;
     bedroomDoor.material.emissiveIntensity = 1.05 + Math.sin(time * 4.1) * 0.28;
     porchLight.intensity = 5.1 + Math.sin(time * 2.8) * 1.05;
     if (stairArrow.visible) {

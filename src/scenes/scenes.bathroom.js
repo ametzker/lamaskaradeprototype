@@ -23,6 +23,8 @@ export function createBathroomScene({ sceneManager, dialogue, controller }) {
   const CHARACTER5_ENV_MAP_INTENSITY_MAX = 0.2; // AJUSTE RAPIDO: menos reflejo de entorno en PERSONAJE5
   const PERSONAJE5_COLLIDER_PADDING_XZ = 1.25; // AJUSTE RAPIDO: ancho/fondo hitbox PERSONAJE5
   const PERSONAJE5_COLLIDER_PADDING_Y = 6; // AJUSTE RAPIDO: altura hitbox PERSONAJE5 (cubre todo el vertical)
+  const BATHROOM_EXIT_DOOR_EMISSIVE_BASE = 1.95; // AJUSTE RAPIDO: brillo base puerta de salida a living room
+  const BATHROOM_EXIT_DOOR_EMISSIVE_PULSE = 0.62; // AJUSTE RAPIDO: pulso extra para hacerla mas visible
   const BATHROOM_CAMERA_HEIGHT_OFFSET = 0.3; // AJUSTE RAPIDO: altura extra de camara en lavabo (metros)
   const previousEyeHeight = controller.eyeHeight ?? 1.65;
   const bathroomEyeHeight = previousEyeHeight + BATHROOM_CAMERA_HEIGHT_OFFSET;
@@ -357,8 +359,8 @@ export function createBathroomScene({ sceneManager, dialogue, controller }) {
 
   const darkDoor = createDoor({
     color: '#111317',
-    emissive: '#7f1f2f',
-    emissiveIntensity: 0.24,
+    emissive: '#8f315f',
+    emissiveIntensity: BATHROOM_EXIT_DOOR_EMISSIVE_BASE,
   });
   darkDoor.position.set(-1.795, 1.8, 1.3);
   darkDoor.rotation.y = -Math.PI / 2;
@@ -411,6 +413,9 @@ export function createBathroomScene({ sceneManager, dialogue, controller }) {
       reflectionModel.position.y = Math.sin(time * 1.2) * 0.03;
       reflectionModel.rotation.z = Math.sin(time * 0.8) * 0.04;
     }
+
+    darkDoor.material.emissiveIntensity = BATHROOM_EXIT_DOOR_EMISSIVE_BASE
+      + Math.sin(time * 4.2) * BATHROOM_EXIT_DOOR_EMISSIVE_PULSE;
   });
 
   root.add(
