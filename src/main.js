@@ -163,15 +163,9 @@ startScreenStripe.className = 'prototype-start-stripe';
 const startScreenInner = document.createElement('div');
 startScreenInner.className = 'prototype-start-inner';
 
-const startScreenLogo = document.createElement('img');
+const startScreenLogo = document.createElement('h1');
 startScreenLogo.className = 'prototype-start-logo';
-startScreenLogo.alt = 'LA MASKARADE';
-startScreenLogo.src = '/models/logo/logo maskarade.svg';
-startScreenLogo.addEventListener('error', () => {
-  // Never render plain fallback text; keep layout clean if logo is missing.
-  startScreenLogo.alt = '';
-  startScreenLogo.style.visibility = 'hidden';
-});
+startScreenLogo.textContent = 'LA MASKARADE';
 
 const startScreenSubtitle = document.createElement('p');
 startScreenSubtitle.className = 'prototype-start-subtitle';
