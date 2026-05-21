@@ -115,7 +115,16 @@ export function createFinalBedroomScene({ sceneManager, dialogue, controller, hu
   replayButton.type = 'button';
   replayButton.textContent = 'Replay';
 
-  endingFinal.append(endingCode, endingText, replayButton);
+  const useDiscountButton = document.createElement('button');
+  useDiscountButton.className = 'prototype-ending-use-discount';
+  useDiscountButton.type = 'button';
+  useDiscountButton.textContent = 'Use discount';
+
+  const endingActions = document.createElement('div');
+  endingActions.className = 'prototype-ending-actions';
+  endingActions.append(replayButton, useDiscountButton);
+
+  endingFinal.append(endingCode, endingText, endingActions);
   endingRoot.append(endingLine, endingFinal);
   document.body.appendChild(endingRoot);
 
@@ -286,6 +295,10 @@ export function createFinalBedroomScene({ sceneManager, dialogue, controller, hu
     sceneManager.setFlag('upstairsEntry', false);
     window.dispatchEvent(new CustomEvent('lamask:showStartScreen'));
     sceneState.replayLocked = false;
+  });
+
+  useDiscountButton.addEventListener('click', () => {
+    window.open('https://lamaskarade.com', '_blank', 'noopener,noreferrer');
   });
 
   root.add(room, ambient, hemi, key, pedestal, finalCharacterAnchor);

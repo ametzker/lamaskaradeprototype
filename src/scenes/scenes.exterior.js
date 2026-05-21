@@ -8,6 +8,8 @@ import {
   stylizeModelMaterials,
 } from '../utils/ModelLoader';
 
+const EXTERIOR_HELP_EVENT = 'lamask:showExteriorLookHelp';
+
 export function createExteriorScene({ sceneManager, controller, hud, dialogue }, options = {}) {
   const { mode = 'default' } = options;
   const root = new THREE.Group();
@@ -49,7 +51,8 @@ export function createExteriorScene({ sceneManager, controller, hud, dialogue },
   const UPSTAIRS_LOOK_NUDGE_XYZ = { x: 5, y: 0, z: 0 }; // AJUSTE RAPIDO: ajuste fino X/Y/Z del look upstairs
   const DOOR_RECTANGLE_OPACITY_ENTRY = 0.62; // AJUSTE RAPIDO: visibilidad recuadro entrar
   const DOOR_RECTANGLE_OPACITY_BATHROOM = 0.68; // AJUSTE RAPIDO: visibilidad recuadro lavabo
-  const DOOR_RECTANGLE_EMISSIVE_BASE = 0.9; // AJUSTE RAPIDO: brillo base de ambos recuadros
+  const DOOR_RECTANGLE_EMISSIVE_ENTRY_BASE = 0.9; // AJUSTE RAPIDO: brillo base recuadro entrar
+  const DOOR_RECTANGLE_EMISSIVE_BATHROOM_BASE = 2.55; // AJUSTE RAPIDO: brillo base recuadro lavabo (mucho mas visible)
   const PERSONAJE3_COLLIDER_PADDING_XZ = 1.15; // AJUSTE RAPIDO: ancho/fondo del area clicable de PERSONAJE3
   const PERSONAJE3_COLLIDER_PADDING_Y = 6; // AJUSTE RAPIDO: altura del area clicable de PERSONAJE3
   const PERSONAJE4_COLLIDER_PADDING_XZ = 1.2; // AJUSTE RAPIDO: ancho/fondo del area clicable de PERSONAJE4
@@ -133,7 +136,7 @@ export function createExteriorScene({ sceneManager, controller, hud, dialogue },
   const entryDoor = createDoor({
     color: '#3b1f31',
     emissive: '#ff4fa2',
-    emissiveIntensity: DOOR_RECTANGLE_EMISSIVE_BASE,
+    emissiveIntensity: DOOR_RECTANGLE_EMISSIVE_ENTRY_BASE,
     width: 1.45,
     height: 2.4,
   });
@@ -145,7 +148,7 @@ export function createExteriorScene({ sceneManager, controller, hud, dialogue },
   const bathroomDoor = createDoor({
     color: '#233449',
     emissive: '#4db5ff',
-    emissiveIntensity: DOOR_RECTANGLE_EMISSIVE_BASE,
+    emissiveIntensity: DOOR_RECTANGLE_EMISSIVE_BATHROOM_BASE,
     width: 1.45,
     height: BATHROOM_DOOR_HEIGHT,
   });
@@ -952,8 +955,8 @@ export function createExteriorScene({ sceneManager, controller, hud, dialogue },
         bedroomDoor.position.z,
       );
     }
-    entryDoor.material.emissiveIntensity = DOOR_RECTANGLE_EMISSIVE_BASE + Math.sin(time * 3.1) * 0.32;
-    bathroomDoor.material.emissiveIntensity = DOOR_RECTANGLE_EMISSIVE_BASE + Math.sin(time * 3.6) * 0.36;
+    entryDoor.material.emissiveIntensity = DOOR_RECTANGLE_EMISSIVE_ENTRY_BASE + Math.sin(time * 3.1) * 0.32;
+    bathroomDoor.material.emissiveIntensity = DOOR_RECTANGLE_EMISSIVE_BATHROOM_BASE + Math.sin(time * 3.6) * 0.95;
     bedroomDoor.material.emissiveIntensity = 1.05 + Math.sin(time * 4.1) * 0.28;
     porchLight.intensity = 5.1 + Math.sin(time * 2.8) * 1.05;
     if (stairArrow.visible) {
@@ -1036,6 +1039,12 @@ export function createExteriorScene({ sceneManager, controller, hud, dialogue },
       maxZ: 16,
     },
     updatables,
+    onEnter: async () => {
+      if (!forceInteriorEntryFromBathroom && !forceUpstairsEntry && !sceneManager.getFlag('exteriorLookHelpShown')) {
+        sceneManager.setFlag('exteriorLookHelpShown', true);
+        window.dispatchEvent(new CustomEvent(EXTERIOR_HELP_EVENT));
+      }
+    },
     interactions: [
       {
         object: entryDoor,

@@ -116,11 +116,13 @@ const interactionSystem = new InteractionSystem({
 });
 
 const START_SCREEN_EVENT = 'lamask:showStartScreen';
+const EXTERIOR_HELP_EVENT = 'lamask:showExteriorLookHelp';
 let sceneManager;
 let dialogueOpen = false;
 let startScreenVisible = true;
 let startScreenStarting = false;
 let hasStartedOnce = false;
+let exteriorHelpVisible = false;
 
 const dialogue = new DialogueSystem({
   onVisibilityChange: (visible) => {
@@ -161,20 +163,76 @@ startScreenStripe.className = 'prototype-start-stripe';
 const startScreenInner = document.createElement('div');
 startScreenInner.className = 'prototype-start-inner';
 
-const startScreenLogo = document.createElement('h1');
+const startScreenLogo = document.createElement('img');
 startScreenLogo.className = 'prototype-start-logo';
-startScreenLogo.textContent = 'LA MASKARADE';
+startScreenLogo.src = '/logo/lamaskarade-logo.svg';
+startScreenLogo.alt = 'LA MASKARADE';
+
+const startScreenSubtitle = document.createElement('p');
+startScreenSubtitle.className = 'prototype-start-subtitle';
+startScreenSubtitle.textContent = 'The House Prototype';
 
 const startScreenHint = document.createElement('button');
 startScreenHint.className = 'prototype-start-cta';
 startScreenHint.type = 'button';
 startScreenHint.textContent = 'Click to start';
 
-startScreenInner.append(startScreenLogo, startScreenHint);
+startScreenInner.append(startScreenLogo, startScreenSubtitle, startScreenHint);
 startScreen.append(startScreenStripe, startScreenInner);
 document.body.appendChild(startScreen);
 
+const exteriorHelp = document.createElement('div');
+exteriorHelp.className = 'prototype-help';
+
+const exteriorHelpPanel = document.createElement('div');
+exteriorHelpPanel.className = 'prototype-help-panel';
+
+const exteriorHelpText = document.createElement('p');
+exteriorHelpText.className = 'prototype-help-text';
+exteriorHelpText.textContent = 'Use the yellow scroll bar to look around.';
+
+const exteriorHelpButton = document.createElement('button');
+exteriorHelpButton.className = 'prototype-help-ok';
+exteriorHelpButton.type = 'button';
+exteriorHelpButton.textContent = 'OK';
+
+exteriorHelpPanel.append(exteriorHelpText, exteriorHelpButton);
+exteriorHelp.append(exteriorHelpPanel);
+document.body.appendChild(exteriorHelp);
+
+const showExteriorHelp = () => {
+  if (exteriorHelpVisible) {
+    return;
+  }
+
+  exteriorHelpVisible = true;
+  exteriorHelp.classList.add('is-visible');
+  sceneManager?.lockInteractions();
+  turnControls.setEnabled(false);
+};
+
+const hideExteriorHelp = () => {
+  if (!exteriorHelpVisible) {
+    return;
+  }
+
+  exteriorHelpVisible = false;
+  exteriorHelp.classList.remove('is-visible');
+  sceneManager?.unlockInteractions();
+  turnControls.setEnabled(true);
+};
+
+exteriorHelp.addEventListener('pointerdown', (event) => {
+  event.stopPropagation();
+});
+
+exteriorHelpButton.addEventListener('click', (event) => {
+  event.stopPropagation();
+  hideExteriorHelp();
+});
+
 const showStartScreen = () => {
+  hideExteriorHelp();
   startScreenVisible = true;
   startScreen.classList.add('is-visible');
   startScreen.classList.remove('is-starting');
@@ -183,6 +241,7 @@ const showStartScreen = () => {
   hud.setPrompt('');
   hud.setHint('');
   hud.setSceneLabel('');
+  sceneManager?.setFlag('exteriorLookHelpShown', false);
 };
 
 const hideStartScreen = () => {
@@ -229,9 +288,17 @@ window.addEventListener(START_SCREEN_EVENT, () => {
   void audioManager.fadeOutAndReset({ duration: 1.05 });
 });
 
+window.addEventListener(EXTERIOR_HELP_EVENT, () => {
+  showExteriorHelp();
+});
+
 const syncTurnControlsState = () => {
-  const canTurn = !startScreenVisible && !dialogueOpen && !sceneManager.transitioning && sceneManager.state.interactionLocks === 0;
-  const hideTurnControls = startScreenVisible || sceneManager.getFlag('hideTurnControls');
+  const canTurn = !startScreenVisible
+    && !dialogueOpen
+    && !exteriorHelpVisible
+    && !sceneManager.transitioning
+    && sceneManager.state.interactionLocks === 0;
+  const hideTurnControls = startScreenVisible || exteriorHelpVisible || sceneManager.getFlag('hideTurnControls');
   turnControls.setVisible(!hideTurnControls);
   turnControls.setEnabled(canTurn);
 };
@@ -241,7 +308,7 @@ window.addEventListener('pointermove', (event) => {
 });
 
 window.addEventListener('pointerdown', async (event) => {
-  if (event.button !== 0 || dialogueOpen || startScreenVisible) {
+  if (event.button !== 0 || dialogueOpen || startScreenVisible || exteriorHelpVisible) {
     return;
   }
 
